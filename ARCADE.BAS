@@ -1,12 +1,31 @@
-DECLARE FUNCTION AskName! ()
-
+DECLARE SUB DayLoop ( gdata as GameData)
 DECLARE SUB DrawCalendar (currday AS LONG)
 DECLARE SUB DrawWindowBorder (x AS INTEGER, y AS INTEGER, sizeX AS INTEGER, sizeY AS INTEGER)
-DECLARE SUB DrawLeftPane (money AS DOUBLE, cabinets AS INTEGER, cabmax AS INTEGER)
+DECLARE SUB DrawLeftPane (gdata as GameData)
+DECLARE SUB GetPlayerInfo (dataTarget as GameData)
 
 ' this is an arcade simulator game
 ' Version 0.0.0 - the start
 
+TYPE GameData
+  ArcadeName AS STRING * 16
+  PlayerName AS STRING * 8
+  DayCount AS LONG
+  Cash AS DOUBLE
+  Cabinets as INTEGER
+  MaxCabs as INTEGER
+  PlayPrice as single
+END TYPE
+
+TYPE Interactable
+  Text as STRING * 20   ' What is written to screen
+  XPos AS INTEGER       ' Where
+  YPos As INTEGER
+  DisplayMe AS INTEGER  ' 0 = don't print it, 1 = print it, 2 = print it, highlighted?
+END TYPE
+$DYNAMIC
+DIM InteractList(5) AS Interactable
+CurrentInteract% = 0     ' Which item should be highlighted
 
 
 
@@ -30,22 +49,9 @@ PRINT CHR$(185)
 
 ' Draw our constant UI elements:
 CALL DrawCalendar(12)
-DAYSTART:
-DO
-test$ = INKEY$
-LOOP UNTIL test$ = CHR$(32)
-LOCATE 4, 20
-test = AskName
-PRINT test
+DIM CurrentGame AS GameData
+CALL GetPlayerInfo(CurrentGame)
 
-DAYEND:
-
-FUNCTION AskName
-INPUT ; "What is your name", fart
-AskName = fart
-EXIT FUNCTION
-
-END FUNCTION
 
 SUB DrawCalendar (currday AS LONG)
 ' all months have 28 days, because that's easier
@@ -109,7 +115,7 @@ FOR i = 1 TO 28
 
 END SUB
 
-SUB DrawLeftPane (money AS DOUBLE, cabinets AS INTEGER, cabmax AS INTEGER)
+SUB DrawLeftPane (gdata as GameData)
 ' Draws the information on the left side, starting with the border
 
 FOR i = 0 TO 20
@@ -118,14 +124,15 @@ FOR i = 0 TO 20
   NEXT
 ' do the other stuff next
 LOCATE 14, 2
-PRINT USING "Money: $####.##"; money
+PRINT USING "Money: $####.##"; gdata.Cash
 LOCATE 15, 2
-IF cabinets > 1 THEN
- PRINT USING "You Have #### Cabinets."; cabinets
-END IF
-IF cabinets = 1 THEN
- PRINT "You Have 1 Cabinet."
- END IF
+SELECT CASE gdata.Cabinets
+  CASE IS = 0
+  PRINT "You have no Cabinets!"
+  CASE IS = 1
+  PRINT "You have 1 Cabinet!"
+  CASE ELSE
+  PRINT USING "You have #### Cabinets!" ; gdata.Cabinets
 END SUB
 
 SUB DrawWindowBorder (x AS INTEGER, y AS INTEGER, sizeX AS INTEGER, sizeY AS INTEGER)
@@ -165,3 +172,14 @@ SUB RunDay
 
 END SUB
 
+SUB GetPlayerInfo (dataTarget as GameData)
+  DrawWindowBorder(40, 5, 30, 5)
+  LOCATE 6,50
+  PRINT: "ENTER YOUR NAME:"
+  LOCATE 7,50
+  COLOR 2,0
+  PRINT: "        "
+  LOCATE 7,50
+  COLOR 0,7
+  INPUT; "";  DataTarget.PlayerName
+END SUB
