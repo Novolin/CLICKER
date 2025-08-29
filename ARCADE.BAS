@@ -7,7 +7,7 @@ DECLARE SUB DrawInteractables (CurrentInteract as INTEGER)
 
 ' this is an arcade simulator game
 ' Version 0.0.0 - the start
-
+CHAIN "UI"
 TYPE GameData
   ArcadeName AS STRING * 16
   PlayerName AS STRING * 8
@@ -18,14 +18,6 @@ TYPE GameData
   PlayPrice as single
 END TYPE
 
-TYPE Interactable
-  Text as STRING * 20   ' What is written to screen
-  XPos AS INTEGER       ' Where
-  YPos As INTEGER
-  DisplayMe AS INTEGER  ' 0 = don't print it, 1 = print it, 2 = print it, highlighted?
-END TYPE
-$DYNAMIC
-DIM SHARED InteractList(5) AS Interactable
 CurrentInteract% = 0     ' Which item should be highlighted
 
 
