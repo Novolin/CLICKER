@@ -3,6 +3,7 @@ DECLARE SUB DrawCalendar (currday AS LONG)
 DECLARE SUB DrawWindowBorder (x AS INTEGER, y AS INTEGER, sizeX AS INTEGER, sizeY AS INTEGER)
 DECLARE SUB DrawLeftPane (gdata as GameData)
 DECLARE SUB GetPlayerInfo (dataTarget as GameData)
+DECLARE SUB DrawInteractables (CurrentInteract as INTEGER)
 
 ' this is an arcade simulator game
 ' Version 0.0.0 - the start
@@ -24,8 +25,9 @@ TYPE Interactable
   DisplayMe AS INTEGER  ' 0 = don't print it, 1 = print it, 2 = print it, highlighted?
 END TYPE
 $DYNAMIC
-DIM InteractList(5) AS Interactable
+DIM SHARED InteractList(5) AS Interactable
 CurrentInteract% = 0     ' Which item should be highlighted
+
 
 
 
@@ -183,3 +185,19 @@ SUB GetPlayerInfo (dataTarget as GameData)
   COLOR 0,7
   INPUT; "";  DataTarget.PlayerName
 END SUB
+
+SUB DrawInteractables (CurrentInteract as INTEGER)
+FOR i = 1 to UBOUND(InteractList)
+  LOCATE InteractList(i).YPos, InteractList(i).XPos
+  IF i = CurrentInteract THEN
+    COLOR 4, 0
+  ELSE
+    COLOR 0,7
+  END IF
+  If InteractList(i).DisplayMe > 0 THEN
+    PRINT InteractList(i).Text
+  END IF
+COLOR 0,7     ' Reset our colour to default
+
+END SUB
+
