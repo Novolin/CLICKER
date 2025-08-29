@@ -1,5 +1,5 @@
 DECLARE SUB DayLoop ( gdata as GameData)
-DECLARE SUB DrawCalendar (currday AS LONG)
+
 DECLARE SUB DrawWindowBorder (x AS INTEGER, y AS INTEGER, sizeX AS INTEGER, sizeY AS INTEGER)
 DECLARE SUB DrawLeftPane (gdata as GameData)
 DECLARE SUB GetPlayerInfo (dataTarget as GameData)
@@ -47,67 +47,7 @@ DIM CurrentGame AS GameData
 CALL GetPlayerInfo(CurrentGame)
 
 
-SUB DrawCalendar (currday AS LONG)
-' all months have 28 days, because that's easier
-' Determine the Year/Month/Day:
 
-calendarday = currday MOD 28
-longmonth = currday \ 28
-calendaryear = longmonth \ 12
-calendarmonth = longmonth MOD 12
-
-SELECT CASE calendarmonth
-  CASE IS = 0
-   textmonth$ = "JAN"
-  CASE IS = 1
-   textmonth$ = "FEB"
-  CASE IS = 2
-   textmonth$ = "MAR"
-  CASE IS = 3
-   textmonth$ = "APR"
-  CASE IS = 4
-   textmonth$ = "MAY"
-  CASE IS = 5
-   textmonth$ = "JUN"
-  CASE IS = 6
-   textmonth$ = "JUL"
-  CASE IS = 7
-   textmonth$ = "AUG"
-  CASE IS = 8
-   textmonth$ = "SEP"
-  CASE IS = 9
-   textmonth$ = "OCT"
-  CASE IS = 10
-   textmonth$ = "NOV"
-  CASE ELSE
-   textmonth$ = "DEC"
-END SELECT
-
-LOCATE 3, 3
-PRINT textmonth$; ", Year "; calendaryear
-
-LOCATE 4, 3
-PRINT "SU MO TU WE TH FR SA"
-firstrow% = 5
-firstcol% = 3
-LOCATE firstrow%, firstcol%
-FOR i = 1 TO 28
-  IF i = calendarday THEN
-    COLOR 0, 7
-  ELSE
-    COLOR 7, 0
-  END IF
-  LOCATE firstrow%, firstcol%
-  PRINT USING "##"; i
-  firstcol% = firstcol% + 3
-  IF firstcol% > 23 THEN
-    firstcol% = 3
-    firstrow% = firstrow% + 1
-    END IF
-  NEXT
-
-
-END SUB
 
 SUB DrawLeftPane (gdata as GameData)
 ' Draws the information on the left side, starting with the border
