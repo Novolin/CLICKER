@@ -1,23 +1,29 @@
-DECLARE FUNCTION NextInteract ( CurrentInteract AS INTEGER, Direction AS INTEGER)
+TYPE Interactable
+  Text AS STRING * 20   ' What is written to screen
+  XPos AS INTEGER       ' Where
+  YPos AS INTEGER
+  DisplayMe AS INTEGER  ' 0 = don't print it, 1 = print it, 2 = print it, highlighted?
+END TYPE
+
+
+DECLARE FUNCTION NextInteract (CurrentInteract AS INTEGER, Direction AS INTEGER)
 DECLARE SUB DrawCalendar (currday AS LONG)
 DECLARE SUB SortInteracts
 
-$STATIC
-DIM SHARED MonthNames(12,3) AS STRING
-MonthNames(1) = "JAN"
-MonthNames(2) = "FEB"
-MonthNames(3) = "MAR"
-MonthNames(4) = "APR"
-MonthNames(5) = "MAY"
-MonthNames(6) = "JUN"
-MonthNames(7) = "JUL"
-MonthNames(8) = "AUG"
-MonthNames(9) = "SEP"
-MonthNames(10) = "OCT"
-MonthNames(11) = "NOV"
-MonthNames(12) = "DEC"
+COMMON SHARED InteractList() AS Interactable
 
-DIM SHARED MonthLens(12) AS INTEGER
+
+' $DYNAMIC
+DIM SHARED InteractList(5) AS Interactable
+
+REM $STATIC
+SUB DrawCalendar (currday AS LONG)
+
+
+' Re-implementing Variable lengths for months
+' Challenge you self!!!
+' leap years can take a hike tho
+DIM MonthLens(12) AS INTEGER
 MonthLens(1) = 31
 MonthLens(2) = 28
 MonthLens(3) = 31
@@ -31,30 +37,24 @@ MonthLens(10) = 31
 MonthLens(11) = 30
 MonthLens(12) = 31
 
-TYPE Interactable
-  Text as STRING * 20   ' What is written to screen
-  XPos AS INTEGER       ' Where
-  YPos As INTEGER
-  DisplayMe AS INTEGER  ' 0 = don't print it, 1 = print it, 2 = print it, highlighted?
-END TYPE
-$DYNAMIC
-DIM SHARED InteractList(5) AS Interactable
 
 
-FUNCTION NextInteract (CurrentInteract AS INTEGER, Direction AS INTEGER)
+DIM MonthNames(12, 3) AS STRING
+MonthNames(1, 1) = "JAN"
+MonthNames(2, 1) = "FEB"
+MonthNames(3, 1) = "MAR"
+MonthNames(4, 1) = "APR"
+MonthNames(5, 1) = "MAY"
+MonthNames(6, 1) = "JUN"
+MonthNames(7, 1) = "JUL"
+MonthNames(8, 1) = "AUG"
+MonthNames(9, 1) = "SEP"
+MonthNames(10, 1) = "OCT"
+MonthNames(11, 1) = "NOV"
+MonthNames(12, 1) = "DEC"
 
 
 
-END FUNCTION
-
-SUB SortInteracts
-
-END SUB
-
-SUB DrawCalendar (currday AS LONG)
-' Re-implementing Variable lengths for months
-' Challenge you self!!!
-' leap years can take a hike tho
 EmptyOffset = 0     ' How many days to offset our calendar start by
 ThisYear = 1
 ThisMonth = 1
@@ -64,7 +64,7 @@ DO WHILE DayCounter > 365
   DayCounter = DayCounter - 365
   EmptyOffset = EmptyOffset + 1
 LOOP
-DO WHILE DayCounter > MonthLens(ThisMonth) ' Same deal here. This is slow but more likely to work 
+DO WHILE DayCounter > MonthLens(ThisMonth) ' Same deal here. This is slow but more likely to work
   DayCounter = DayCounter - MonthLens(ThisMonth)
   EmptyOffset = EmptyOffset + (MonthLens(ThisMonth) - 28) ' Modulo division? What do i look like, a nerd?
   ThisMonth = ThisMonth + 1
@@ -73,7 +73,7 @@ LOOP    ' i mean buddy, you're running a dos game written in qb4.5 in 2025, slow
 EmptyOffset = EmptyOffset MOD 7   ' ok yeah fine i *am* writing a qb 4.5 program in 2025, I am a nerd.
 
 LOCATE 3, 3
-PRINT MonthNames(ThisMonth); ", Year "; ThisYear
+PRINT MonthNames(ThisMonth, 1); ", Year "; ThisYear
 
 LOCATE 4, 3
 PRINT "SU MO TU WE TH FR SA"
@@ -96,3 +96,10 @@ FOR i = 1 TO MonthLens(ThisMonth)
 
 
 END SUB
+
+FUNCTION NextInteract (CurrentInteract AS INTEGER, Direction AS INTEGER)
+
+
+
+END FUNCTION
+
